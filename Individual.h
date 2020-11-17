@@ -9,8 +9,6 @@ using namespace std;
 
 class Individual {
  public:
-  using Comparator = bool (Individual::*)(Individual, Individual);
-
   vector<float> genes;
   vector<float> objectiveSet;
   vector<Individual *> dominatedSet;
@@ -23,6 +21,7 @@ class Individual {
   Individual(int, Problem *);
   void evaluation();
   bool dominate(Individual);
+  static bool descending(Individual *, Individual *);
 };
 
 #endif // !INDIVIDUAL_H

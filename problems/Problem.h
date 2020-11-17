@@ -12,7 +12,7 @@ class Problem {
   int x_num;
   int objective_size;
   //定义域
-  float** domain;
+  std::vector<std::vector<float>> domain;
   float x_min, x_max;
   virtual void evaluation(std::vector<float> &, std::vector<float> &) = 0;
   virtual void reference() = 0;

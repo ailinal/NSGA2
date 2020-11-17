@@ -14,8 +14,11 @@ class GeneticAlgorithm {
  public:
   void SBX(int, Population &);
   void PLM(int, Population &);
-  vector<Front> fastNonDominatedSort(Population *);
+  vector<Front> fastNonDominatedSort(Population &);
   void crowdingDistanceAssignment(Front, Population &);
+  void tournament_selection(Population &);
+  Population next_new_pop(Population &, int, int);
+  void elitism(Population &);
 
 };
 

@@ -4,16 +4,10 @@
 #include "Individual.h"
 #include "GeneticAlgorithm.h"
 
-#define POPULATION_SIZE 100
-#define CROSSOVER_PROB 0.9
-#define MUTATION_PROB (1 / 30)
-
-typedef vector<Individual *> Front;
-
-bool descending(Individual *, Individual *);
+//typedef vector<Individual> Front;
 
 int main() {
-  int generation = 200;
+  int generation = 500;
   GeneticAlgorithm ga;
   Problem *problem = new ZDT1();
   problem->reference();
@@ -22,38 +16,15 @@ int main() {
   _tmpParent.initialize();
   _tmpParent.evaluation();
 
+  //非支配排序
+  ga.fastNonDominatedSort(_tmpParent);
+  Population _tmpChild = ga.next_new_pop(_tmpParent, ETA_C, ETA_M);
+
   for (int i = 0; i < generation; i++) {
-    Population _tmpChild = _tmpParent.copy_all();
-
-    //交叉变异
-    ga.SBX(20, _tmpChild);
-//    ga.PLM(20, -(pow(10.0, 3.0)), pow(10.0, 3.0), _tmpChild);
-    ga.PLM(20, _tmpChild);
-    _tmpChild.evaluation();
-
     Population _tmpComb = _tmpParent.combination(_tmpChild);
-    //非支配排序
-    vector<Front> front = ga.fastNonDominatedSort(&_tmpComb);
-    _tmpParent.clear();
-
-    int j = 0;
-    while (_tmpParent.individualSet.size() + front[j].size() <= POPULATION_SIZE) {
-      if (front[j].size() == 0) {
-        cin.get();
-        break;
-      }
-//      ga.crowdingDistanceAssignment(front[j], _tmpParent);
-      for (Individual *ind : front[j]) {
-        _tmpParent.individualSet.push_back(*ind);
-      }
-      j++;
-    }
-    ga.crowdingDistanceAssignment(front[j], _tmpParent);
-    sort(front[j].begin(), front[j].end(), descending);
-    int size = _tmpParent.individualSet.size();
-    for (int k = 0; k < (POPULATION_SIZE - size); k++) {
-      _tmpParent.individualSet.push_back(*front[j][k]);
-    }
+    ga.elitism(_tmpComb);
+    _tmpParent = _tmpComb;
+    _tmpChild = ga.next_new_pop(_tmpParent, ETA_C, ETA_M);
     cout << "Parent size: " << _tmpParent.individualSet.size() << endl;
     cout << "Complete generation [" << i << "]" << endl;
   }
@@ -67,10 +38,3 @@ int main() {
   os.close();
 }
 
-bool descending(Individual *a, Individual *b) {
-  if ((a->rank < b->rank) || ((a->rank == b->rank) && (a->distance > b->distance))) {
-    return true;
-  } else {
-    return false;
-  }
-}

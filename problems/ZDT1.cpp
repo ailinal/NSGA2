@@ -51,6 +51,7 @@ ZDT1::ZDT1() {
   x_max = 1.0;
   x_num = 30;
   objective_size = 2;
+//  domain = reinterpret_cast<float **>(new float[x_num][2]);
 }
 
 

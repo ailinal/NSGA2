@@ -37,3 +37,10 @@ bool Individual::dominate(Individual q) {
   }
   return true;
 }
+bool Individual::descending(Individual* a, Individual* b) {
+  if ((a->rank < b->rank) || ((a->rank == b->rank) && (a->distance > b->distance))) {
+    return true;
+  } else {
+    return false;
+  }
+}

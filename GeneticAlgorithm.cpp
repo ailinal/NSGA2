@@ -9,7 +9,6 @@ void GeneticAlgorithm::SBX(int eta, Population &p) {
   double yl = p.problem_->x_min;
   double yu = p.problem_->x_max;
   double y1, y2;
-  double c1, c2;
   double alpha, beta, betaq;
 
   for (int i = 0; i < p.populationSize / 2; i++) {
@@ -22,64 +21,67 @@ void GeneticAlgorithm::SBX(int eta, Population &p) {
     if (dist_real(rng) <= p.crossover_prob) {
       for (int j = 0; j < p.geneSize; j++) {
         if (abs(p1.genes[j] - p2.genes[2]) > numeric_limits<float>::epsilon()) {
+          if (dist_real(rng) < 0.5) {
+            if (p1.genes[j] < p2.genes[j]) {
+              y1 = p1.genes[j];
+              y2 = p2.genes[j];
+            } else {
+              y1 = p2.genes[j];
+              y2 = p1.genes[j];
+            }
 
-          if (p1.genes[j] < p2.genes[j]) {
-            y1 = p1.genes[j];
-            y2 = p2.genes[j];
+            double rand = dist_real(rng);
+            beta = 1.0 + (2.0 * (y1 - yl) / (y2 - y1));
+            alpha = 2.0 - pow(beta, -(eta + 1.0));
+            if (rand <= (1.0 / alpha)) {
+              betaq = pow((rand * alpha), (1.0 / (eta + 1.0)));
+            } else {
+              betaq = pow((1.0 / (2.0 - rand * alpha)), (1.0 / (eta + 1.0)));
+            }
+            double c11, c22;
+            c11 = 0.5 * ((y1 + y2) - betaq * (y2 - y1));
+
+            beta = 1.0 + (2.0 * (yu - y2) / (y2 - y1));
+            alpha = 2.0 - pow(beta, -(eta + 1.0));
+            if (rand <= (1.0 / alpha)) {
+              betaq = pow((rand * alpha), (1.0 / (eta + 1.0)));
+            } else {
+              betaq = pow((1.0 / (2.0 - rand * alpha)), (1.0 / (eta + 1.0)));
+            }
+            c22 = 0.5 * ((y1 + y2) + betaq * (y2 - y1));
+
+            if (c11 < yl)
+              c11 = yl;
+            if (c22 < yl)
+              c22 = yl;
+            if (c11 > yu)
+              c11 = yu;
+            if (c22 > yu)
+              c22 = yu;
+            if (dist_real(rng) <= 0.5) {
+              c1.genes[j] = c22;
+              c2.genes[j] = c11;
+            } else {
+              c1.genes[j] = c11;
+              c2.genes[j] = c22;
+            }
+
           } else {
-            y1 = p2.genes[j];
-            y2 = p1.genes[j];
+            c1.genes[j] = p1.genes[j];
+            c2.genes[j] = p2.genes[j];
           }
-
-          double rand = dist_real(rng);
-          beta = 1.0 + (2.0 * (y1 - yl) / (y2 - y1));
-          alpha = 2.0 - pow(beta, -(eta + 1.0));
-          if (rand <= (1.0 / alpha)) {
-            betaq = pow((rand * alpha), (1.0 / (eta + 1.0)));
-          } else {
-            betaq = pow((1.0 / (2.0 - rand * alpha)), (1.0 / (eta + 1.0)));
-          }
-          double c11, c22;
-          c11 = 0.5 * ((y1 + y2) - betaq * (y2 - y1));
-
-          beta = 1.0 + (2.0 * (yu - y2) / (y2 - y1));
-          alpha = 2.0 - pow(beta, -(eta + 1.0));
-          if (rand <= (1.0 / alpha)) {
-            betaq = pow((rand * alpha), (1.0 / (eta + 1.0)));
-          } else {
-            betaq = pow((1.0 / (2.0 - rand * alpha)), (1.0 / (eta + 1.0)));
-          }
-          c22 = 0.5 * ((y1 + y2) + betaq * (y2 - y1));
-
-          if (c11 < yl)
-            c11 = yl;
-          if (c22 < yl)
-            c22 = yl;
-          if (c11 > yu)
-            c11 = yu;
-          if (c22 > yu)
-            c22 = yu;
-          if (dist_real(rng) <= 0.5) {
-            c1.genes[j] = c22;
-            c2.genes[j] = c11;
-          } else {
-            c1.genes[j] = c11;
-            c2.genes[j] = c22;
-          }
-
         } else {
           c1.genes[j] = p1.genes[j];
           c2.genes[j] = p2.genes[j];
         }
       }
 
+      _tmpSet.push_back(c1);
+      _tmpSet.push_back(c2);
     } else {
       _tmpSet.push_back(p1);
       _tmpSet.push_back(p2);
     }
-    _tmpSet.push_back(c1);
-    _tmpSet.push_back(c2);
-
   }
   p.individualSet = _tmpSet;
 }
@@ -119,18 +121,18 @@ void GeneticAlgorithm::PLM(int eta, Population &p) {
 }
 
 //快速非支配排序
-vector<Front> GeneticAlgorithm::fastNonDominatedSort(Population *r) {
+vector<Front> GeneticAlgorithm::fastNonDominatedSort(Population &r) {
   vector<Front> front;
   front.resize(1);
 
-  for (int i = 0; i < r->populationSize; i++) {
-    Individual *p = &r->individualSet[i];
+  for (int i = 0; i < r.populationSize; i++) {
+    Individual *p = &r.individualSet[i];
     p->dominatedSet.clear();
     p->dominatedCount = 0;
 
-    for (int j = 0; j < r->populationSize; j++) {
+    for (int j = 0; j < r.populationSize; j++) {
       if (i == j) { continue; }
-      Individual *q = &r->individualSet[j];
+      Individual *q = &r.individualSet[j];
       if (p->dominate(*q)) {
         p->dominatedSet.push_back(q);
       } else if (q->dominate(*p)) {
@@ -221,4 +223,66 @@ void GeneticAlgorithm::crowdingDistanceAssignment(Front f, Population &p) {
 //      / (f_max.objectiveSet[m] - f_min.objectiveSet[m]);
     }
   }
+}
+
+//二元竞标赛选择
+void GeneticAlgorithm::tournament_selection(Population &p) {
+  int n = 2;
+  int pop_size = p.populationSize;
+  std::random_device rd;
+  std::mt19937 rng(rd());
+  std::uniform_real_distribution<> dist_real(0, 1);
+  vector<Individual> _temp_individual_set;
+  vector<Individual *> candidates;
+
+  for (int kI = 0; kI < pop_size; ++kI) {
+    candidates.clear();
+    //随机选取两个
+    for (int kJ = 0; kJ < n; ++kJ) {
+      int index = int(dist_real(rng) * pop_size);
+      Individual *candidate = &p.individualSet[index];
+      candidates.push_back(candidate);
+    }
+    //选择一个进入
+
+    sort(candidates.begin(), candidates.end(), Individual::descending);
+    _temp_individual_set.push_back(*candidates[0]);
+  }
+
+  p.individualSet = _temp_individual_set;
+}
+Population GeneticAlgorithm::next_new_pop(Population &p, int eta_c, int eta_m) {
+  Population _tmp = p.copy_all();
+
+  tournament_selection(_tmp);
+  SBX(eta_c, _tmp);
+  PLM(eta_m, _tmp);
+  _tmp.evaluation();
+  return _tmp;
+}
+void GeneticAlgorithm::elitism(Population &p) {
+  vector<Front> front = fastNonDominatedSort(p);
+  vector<Individual> _tmp_individual_set;
+
+  int j = 0;
+  while (_tmp_individual_set.size() + front[j].size() <= POPULATION_SIZE) {
+    if (front[j].size() == 0) {
+      cin.get();
+      break;
+    }
+
+    for (Individual *ind : front[j]) {
+      _tmp_individual_set.push_back(*ind);
+    }
+    j++;
+  }
+  crowdingDistanceAssignment(front[j], p);
+  sort(front[j].begin(), front[j].end(), Individual::descending);
+  int size = _tmp_individual_set.size();
+  for (int k = 0; k < (POPULATION_SIZE - size); k++) {
+    _tmp_individual_set.push_back(*front[j][k]);
+  }
+
+  p.individualSet = _tmp_individual_set;
+  p.populationSize = POPULATION_SIZE;
 }
