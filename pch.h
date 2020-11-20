@@ -12,7 +12,7 @@
 #include <fstream>
 #include <numeric>
 
-#define POPULATION_SIZE 200
+#define POPULATION_SIZE 500
 #define CROSSOVER_PROB 0.9
 #define ETA_C 20
 #define ETA_M 20

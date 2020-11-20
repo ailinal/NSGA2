@@ -20,21 +20,21 @@ void ZDT1::evaluation(std::vector<float> &genes, std::vector<float> &objectiveSe
   for (int i = 1; i < x_num; ++i) {
     sum += genes[i];
   }
-  float g = 1 + 9 * (sum / float(x_num - 1));
-  float f2 = g * (1 - pow(f1 / g, 0.5));
+  float g = 1.0 + 9.0 * (sum / float(x_num - 1));
+  float f2 = g * (1.0 - pow(f1 / g, 0.5));
   objectiveSet[1] = f2;
 
 }
 
 void ZDT1::reference() {
-  int size = 200;
-  float x[size];
+  int size = POPULATION_SIZE;
+  double x[size];
   x[0] = 0;
   for (int i = 1; i < size; ++i) {
     x[i] = x[i - 1] + 1.0 / size;
   }
 
-  float y[size];
+  double y[size];
   for (int i = 0; i < size; ++i) {
     y[i] = 1 - sqrt(x[i]);
   }

@@ -4,7 +4,6 @@
 #include "Individual.h"
 #include "GeneticAlgorithm.h"
 
-//typedef vector<Individual> Front;
 
 int main() {
   int generation = 500;
@@ -29,7 +28,7 @@ int main() {
     cout << "Complete generation [" << i << "]" << endl;
   }
 
-  ofstream os("result.txt");
+  ofstream os("result_" + to_string(generation) + ".txt");
   if (os.is_open()) {
     for (auto i : _tmpParent.individualSet) {
       os << i.objectiveSet[0] << "\t" << i.objectiveSet[1] << endl;

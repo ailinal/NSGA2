@@ -92,32 +92,68 @@ void GeneticAlgorithm::PLM(int eta, Population &p) {
   std::uniform_real_distribution<> dist_real(0, 1);
   float lower = p.problem_->x_min;
   float upper = p.problem_->x_max;
+  int x_num = p.geneSize;
+
+
 
   for (int i = 0; i < p.individualSet.size(); i++) {
     Individual &ind = p.individualSet[i];
-    if (dist_real(rng) <= p.mutation_prob) {
-      for (int j = 0; j < p.geneSize; j++) {
-        //开始变异
-        float u = dist_real(rng);
-        float delta;
-        if (u < 0.5) {
-          delta = pow(2.0 * u, 1 / (1.0 + eta)) - 1;
+//
+//    for (int j = 0; j < p.geneSize; j++) {
+//      if (dist_real(rng) <= p.mutation_prob) {
+//        //开始变异
+//        float u = dist_real(rng);
+//        float delta;
+//        if (u < 0.5) {
+//          delta = pow(2.0 * u, 1 / (1.0 + eta)) - 1;
+//        } else {
+//          delta = pow(1.0 - (2 * (1 - u)), 1 / (1.0 + eta));
+//        }
+//        ind.genes[j] += delta;
+//
+//        //控制定义域
+//        if (ind.genes[j] < lower) {
+//          ind.genes[j] = lower;
+//        }
+//        if (ind.genes[j] > upper) {
+//          ind.genes[j] = upper;
+//        }
+//
+//      }
+//
+//    }
+
+    double rnd, delta1, delta2, mut_pow, deltaq;
+    double y, val, xy;
+    float yl = p.problem_->x_min;
+    float yu = p.problem_->x_max;
+
+    for (int j = 0; j < x_num; j++) {
+      if (dist_real(rng) <= p.mutation_prob) {
+        y = ind.genes[j];
+        delta1 = (y - yl) / (yu - yl);
+        delta2 = (yu - y) / (yu - yl);
+        rnd = dist_real(rng);
+        mut_pow = 1.0 / (eta + 1.0);
+        if (rnd <= 0.5) {
+          xy = 1.0 - delta1;
+          val = 2.0 * rnd + (1.0 - 2.0 * rnd) * (pow(xy, (eta + 1.0)));
+          deltaq = pow(val, mut_pow) - 1.0;
         } else {
-          delta = pow(1.0 - (2 * (1 - u)), 1 / (1.0 + eta));
+          xy = 1.0 - delta2;
+          val = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) * (pow(xy, (eta + 1.0)));
+          deltaq = 1.0 - (pow(val, mut_pow));
         }
-        ind.genes[j] += delta;
-
-        if (ind.genes[j] < lower) {
-          ind.genes[j] = lower;
-        }
-        if (ind.genes[j] > upper) {
-          ind.genes[j] = upper;
-        }
-
+        y = y + deltaq * (yu - yl);
+        if (y < yl)
+          y = yl;
+        if (y > yu)
+          y = yu;
+        ind.genes[j] = y;
       }
-
     }
   }
+
 }
 
 //快速非支配排序
@@ -217,7 +253,7 @@ void GeneticAlgorithm::crowdingDistanceAssignment(Front f, Population &p) {
     }
     f[0]->distance = numeric_limits<float>::infinity();
     f[l - 1]->distance = numeric_limits<float>::infinity();
-    for (int j = 2; j < l - 1; j++) {
+    for (int j = 1; j < l - 1; j++) {
       f[j]->distance = f[j]->distance
           + (f[j + 1]->objectiveSet[m] - f[j - 1]->objectiveSet[m]) / (max_min_table[0][m] - max_min_table[1][m]);
 //      / (f_max.objectiveSet[m] - f_min.objectiveSet[m]);
@@ -231,24 +267,44 @@ void GeneticAlgorithm::tournament_selection(Population &p) {
   int pop_size = p.populationSize;
   std::random_device rd;
   std::mt19937 rng(rd());
-  std::uniform_real_distribution<> dist_real(0, 1);
+  std::uniform_int_distribution<> dist_real(0, pop_size-1);
   vector<Individual> _temp_individual_set;
   vector<Individual *> candidates;
 
   for (int kI = 0; kI < pop_size; ++kI) {
     candidates.clear();
     //随机选取两个
+    int tmp[n];
     for (int kJ = 0; kJ < n; ++kJ) {
-      int index = int(dist_real(rng) * pop_size);
+      int index = int(dist_real(rng));
+      //去重
+      bool contain = false;
+      for (int j = 0; j < kJ; j++) {
+        if (index == tmp[j]) {
+          contain = true;
+          break;
+        }
+      }
+      while (contain) {
+        index = int(dist_real(rng));
+        contain = false;
+        for (int j = 0; j < kJ; j++) {
+          if (index == tmp[j]) {
+            contain = true;
+            break;
+          }
+        }
+      }
+
+      tmp[kJ] = index;
+
       Individual *candidate = &p.individualSet[index];
       candidates.push_back(candidate);
     }
     //选择一个进入
-
     sort(candidates.begin(), candidates.end(), Individual::descending);
     _temp_individual_set.push_back(*candidates[0]);
   }
-
   p.individualSet = _temp_individual_set;
 }
 Population GeneticAlgorithm::next_new_pop(Population &p, int eta_c, int eta_m) {
@@ -266,11 +322,6 @@ void GeneticAlgorithm::elitism(Population &p) {
 
   int j = 0;
   while (_tmp_individual_set.size() + front[j].size() <= POPULATION_SIZE) {
-    if (front[j].size() == 0) {
-      cin.get();
-      break;
-    }
-
     for (Individual *ind : front[j]) {
       _tmp_individual_set.push_back(*ind);
     }
