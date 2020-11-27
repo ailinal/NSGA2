@@ -10,35 +10,45 @@
 pch.h
 ../problems/pch.h
 
-/Users/yang/Projects/enjoy/NSGA2/GeneticAlgorithm.cpp
-pch.h
-/Users/yang/Projects/enjoy/NSGA2/pch.h
-GeneticAlgorithm.h
-/Users/yang/Projects/enjoy/NSGA2/GeneticAlgorithm.h
+../problems/ZDT1.h
+Problem.h
+../problems/Problem.h
 
-/Users/yang/Projects/enjoy/NSGA2/GeneticAlgorithm.h
+/home/yang/Projects/NSGA2/GeneticAlgorithm.h
 pch.h
-/Users/yang/Projects/enjoy/NSGA2/pch.h
+/home/yang/Projects/NSGA2/pch.h
 Population.h
-/Users/yang/Projects/enjoy/NSGA2/Population.h
+/home/yang/Projects/NSGA2/Population.h
 Individual.h
-/Users/yang/Projects/enjoy/NSGA2/Individual.h
+/home/yang/Projects/NSGA2/Individual.h
 
-/Users/yang/Projects/enjoy/NSGA2/Individual.h
+/home/yang/Projects/NSGA2/Individual.h
 problems/Problem.h
 -
 pch.h
-/Users/yang/Projects/enjoy/NSGA2/pch.h
+/home/yang/Projects/NSGA2/pch.h
 
-/Users/yang/Projects/enjoy/NSGA2/Population.h
+/home/yang/Projects/NSGA2/NSGA2.cpp
+problems/ZDT1.h
+-
+pch.h
+/home/yang/Projects/NSGA2/pch.h
+Population.h
+/home/yang/Projects/NSGA2/Population.h
+Individual.h
+/home/yang/Projects/NSGA2/Individual.h
+GeneticAlgorithm.h
+/home/yang/Projects/NSGA2/GeneticAlgorithm.h
+
+/home/yang/Projects/NSGA2/Population.h
 problems/Problem.h
 -
 pch.h
-/Users/yang/Projects/enjoy/NSGA2/pch.h
+/home/yang/Projects/NSGA2/pch.h
 Individual.h
-/Users/yang/Projects/enjoy/NSGA2/Individual.h
+/home/yang/Projects/NSGA2/Individual.h
 
-/Users/yang/Projects/enjoy/NSGA2/pch.h
+/home/yang/Projects/NSGA2/pch.h
 iostream
 -
 vector

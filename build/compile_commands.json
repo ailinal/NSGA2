@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/GeneticAlgorithm.cpp.o -c /home/yang/Projects/NSGA2/GeneticAlgorithm.cpp",
+  "file": "/home/yang/Projects/NSGA2/GeneticAlgorithm.cpp"
+},
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/Individual.cpp.o -c /home/yang/Projects/NSGA2/Individual.cpp",
+  "file": "/home/yang/Projects/NSGA2/Individual.cpp"
+},
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/NSGA2.cpp.o -c /home/yang/Projects/NSGA2/NSGA2.cpp",
+  "file": "/home/yang/Projects/NSGA2/NSGA2.cpp"
+},
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/pch.cpp.o -c /home/yang/Projects/NSGA2/pch.cpp",
+  "file": "/home/yang/Projects/NSGA2/pch.cpp"
+},
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/Population.cpp.o -c /home/yang/Projects/NSGA2/Population.cpp",
+  "file": "/home/yang/Projects/NSGA2/Population.cpp"
+},
+{
+  "directory": "/home/yang/Projects/NSGA2/build",
+  "command": "/usr/bin/c++   -I/home/yang/Projects/NSGA2/.  -g   -std=gnu++14 -o CMakeFiles/NSGA2.dir/problems/ZDT1.cpp.o -c /home/yang/Projects/NSGA2/problems/ZDT1.cpp",
+  "file": "/home/yang/Projects/NSGA2/problems/ZDT1.cpp"
+}
+]
